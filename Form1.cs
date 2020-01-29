@@ -29,6 +29,7 @@ namespace robo_parser
             public int comb;
             public double minstress;
             public double maxstress;
+            public string data;
 
         }
 
@@ -68,7 +69,7 @@ namespace robo_parser
                         // string strrow = csvtext[i].Split(";");
                         String pattern = @"[/;]";
                         String[] elements = Regex.Split(csvtext[i], pattern);
-                        // 0 - стержень 1 - сочетание 13 - минимум по мезусу 14 - максимум
+                        // 0 - стержень 1 - сочетание 12 - минимум по мезусу 13 - максимум 16 - data
                         rows[j] = new row();
                         if (int.TryParse(elements[0], out tmpi))
                             rows[j].rod = tmpi;
@@ -86,6 +87,10 @@ namespace robo_parser
                             rows[j].maxstress = tmpj;
                         else
                             rows[j].maxstress = 0;
+                        if (elements[16] != null)
+                            rows[j].data = elements[16];
+                        else
+                            rows[j].data = "";
                         j++;
                     }
                     //search max
@@ -128,7 +133,7 @@ namespace robo_parser
                             }
                             if (ccrod != rows[i].rod)
                             {
-                                maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString());
+                                maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString() + ";" + rows[maxind].data);
                                 ccrod = rows[i].rod;
                                 maxvalue = rows[i].maxstress;
                                 maxind = i;
@@ -141,7 +146,7 @@ namespace robo_parser
 
                         }
                     }
-                    maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString());
+                    maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString() + ";" + rows[maxind].data);
 
                     //save results
                     File.WriteAllLines(Path.GetFileName(csv)+"_result.txt", maxlist);
