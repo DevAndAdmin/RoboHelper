@@ -54,16 +54,23 @@ namespace robo_parser
         public void CSVParse()
         {
             //
-            string[] csvtext = {""}; 
+            string[] csvtext = {""};
+            int listid = 0;
+            string fname = "";
             if (csvfiles.Count > 0)
                 foreach (string csv in csvfiles)
                 {
-                    //
+                    fname = Path.GetFileName(csv);
+                    listid = listBox1.FindString(fname);
+                    listBox1.Items[listid] = fname + "   - working...";
                     try
                     {
                         csvtext = File.ReadAllLines(csv);
                     }
-                    catch { }
+                    catch 
+                    { 
+                        listBox1.Items[listid] = fname + "   - read file error."; 
+                    }
                     if (csvtext.Length > 0)
                     {
                         row[] rows = new row[csvtext.Length];
@@ -127,7 +134,15 @@ namespace robo_parser
                         }
                         maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString() + ";" + rows[maxind].data);
                         //save results
-                        File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
+                        listBox1.Items[listid] = fname + "   - save.";
+                        try
+                        {
+                            File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
+                        }
+                        catch 
+                        {
+                            listBox1.Items[listid] = fname + "   - save result file error.";
+                        }
 
                     }
                 }
