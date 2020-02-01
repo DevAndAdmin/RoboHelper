@@ -51,9 +51,10 @@ namespace robo_parser
             button1.Enabled = true;
         }
 
-        public void CSVParse()
+        public async void CSVParse()
         {
             //
+            button1.Enabled = false;
             string[] csvtext = {""};
             int listid = 0;
             string fname = "";
@@ -65,11 +66,14 @@ namespace robo_parser
                     listBox1.Items[listid] = fname + "   - working...";
                     try
                     {
-                        csvtext = File.ReadAllLines(csv);
+                        await Task.Run(() =>
+                        {
+                            csvtext = File.ReadAllLines(csv);
+                        });
                     }
-                    catch 
-                    { 
-                        listBox1.Items[listid] = fname + "   - read file error."; 
+                    catch
+                    {
+                        listBox1.Items[listid] = fname + "   - read file error.";
                     }
                     if (csvtext.Length > 0)
                     {
@@ -78,33 +82,36 @@ namespace robo_parser
                         int tmpi = 0;
                         double tmpj = 1;
                         //fill array from parsed file
-                        for (int i = 18; i < csvtext.Length; i++)
+                        await Task.Run(() =>
                         {
-                            String pattern = @"[/;]";
-                            String[] elements = Regex.Split(csvtext[i], pattern);     // 0 - стержень 1 - сочетание 12 - минимум по мезусу 13 - максимум 16 - data
-                            rows[j] = new row();
-                            if (int.TryParse(elements[0], out tmpi))
-                                rows[j].rod = tmpi;
-                            else
-                                rows[j].rod = 0;
-                            if (int.TryParse(elements[1], out tmpi))
-                                rows[j].comb = tmpi;
-                            else
-                                rows[j].comb = 0;
-                            if (double.TryParse(elements[12], out tmpj))
-                                rows[j].minstress = tmpj;
-                            else
-                                rows[j].minstress = 0;
-                            if (double.TryParse(elements[13], out tmpj))
-                                rows[j].maxstress = tmpj;
-                            else
-                                rows[j].maxstress = 0;
-                            if (elements[16] != null)
-                                rows[j].data = elements[16];
-                            else
-                                rows[j].data = "";
-                            j++;
-                        }
+                            for (int i = 18; i < csvtext.Length; i++)
+                            {
+                                String pattern = @"[/;]";
+                                String[] elements = Regex.Split(csvtext[i], pattern);     // 0 - стержень 1 - сочетание 12 - минимум по мезусу 13 - максимум 16 - data
+                                rows[j] = new row();
+                                if (int.TryParse(elements[0], out tmpi))
+                                    rows[j].rod = tmpi;
+                                else
+                                    rows[j].rod = 0;
+                                if (int.TryParse(elements[1], out tmpi))
+                                    rows[j].comb = tmpi;
+                                else
+                                    rows[j].comb = 0;
+                                if (double.TryParse(elements[12], out tmpj))
+                                    rows[j].minstress = tmpj;
+                                else
+                                    rows[j].minstress = 0;
+                                if (double.TryParse(elements[13], out tmpj))
+                                    rows[j].maxstress = tmpj;
+                                else
+                                    rows[j].maxstress = 0;
+                                if (elements[16] != null)
+                                    rows[j].data = elements[16];
+                                else
+                                    rows[j].data = "";
+                                j++;
+                            }
+                        });
                         //search max
                         //LINQ
                         //var query = from row tmprow in rows where tmprow.rod == 7 select tmprow; 
@@ -137,15 +144,18 @@ namespace robo_parser
                         listBox1.Items[listid] = fname + "   - save.";
                         try
                         {
-                            File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
+                            await Task.Run(() =>
+                            {
+                                File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
+                            });
                         }
-                        catch 
+                        catch
                         {
                             listBox1.Items[listid] = fname + "   - save result file error.";
                         }
-
                     }
                 }
+            button1.Enabled = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
