@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+//using Microsoft.Office.Interop.Excel;
+
 
 namespace robo_parser
 {
@@ -148,6 +150,35 @@ namespace robo_parser
                             {
                                 File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
                             });
+                            //excel save
+                            /*
+                             // Загрузить Excel, затем создать новую пустую рабочую книгу
+            Excel.Application excelApp = new Excel.Application();
+            
+            // Сделать приложение Excel видимым
+            excelApp.Visible = true;
+            excelApp.Workbooks.Add();
+            Excel._Worksheet workSheet = excelApp.ActiveSheet;
+            // Установить заголовки столбцов в ячейках
+            workSheet.Cells[1, "A"] = "NameCompany";
+            workSheet.Cells[1, "B"] = "Site";
+            workSheet.Cells[1, "C"] = "Cost";
+            int row = 1;
+            foreach (Price c in vPices)
+            {
+                row++;
+                workSheet.Cells[row, "A"] = c.Name;
+                workSheet.Cells[row, "B"] = c.Site;
+                workSheet.Cells[row, "C"] = c.Cost;
+            }
+               // Сохранить файл, выйти из Excel
+ 
+                // убрать предупреждения!!! нужно для перезаписи
+                excelApp.DisplayAlerts = false;
+                workSheet.SaveAs(string.Format(@"{0}\Price.xlsx", Environment.CurrentDirectory));
+               
+                excelApp.Quit();
+                             */
                         }
                         catch
                         {
