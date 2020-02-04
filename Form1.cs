@@ -47,7 +47,7 @@ namespace robo_parser
                 {
                     //csvfiles.Add(new Bitmap(file.FullName)); //если расширение подошло, создаём Bitmap
                     csvfiles.Add(file);
-                    listBox1.Items.Add(Path.GetFileName(file));
+                    //listBox1.Items.Add(Path.GetFileName(file));
                     int rowNumber = dataGridView1.Rows.Add();
                     dataGridView1.Rows[rowNumber].Cells[0].Value = true;
                     dataGridView1.Rows[rowNumber].Cells[1].Value = Path.GetFileName(file);
