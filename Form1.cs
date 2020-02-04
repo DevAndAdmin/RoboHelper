@@ -32,11 +32,11 @@ namespace robo_parser
             public double minstress;
             public double maxstress;
             public string data;
-
         }
 
         public void LoadFileList()
         {
+            DataGridViewRow rr;
             DirectoryInfo directoryInfo = new DirectoryInfo(Application.StartupPath);
             label2.Text = Application.StartupPath;
             string[] allfiles = Directory.GetFiles(Application.StartupPath);
@@ -48,6 +48,12 @@ namespace robo_parser
                     //csvfiles.Add(new Bitmap(file.FullName)); //если расширение подошло, создаём Bitmap
                     csvfiles.Add(file);
                     listBox1.Items.Add(Path.GetFileName(file));
+                    int rowNumber = dataGridView1.Rows.Add();
+                    dataGridView1.Rows[rowNumber].Cells[0].Value = true;
+                    dataGridView1.Rows[rowNumber].Cells[1].Value = Path.GetFileName(file);
+                    dataGridView1.Rows[rowNumber].Cells[2].Value = 0;
+                    dataGridView1.Rows[rowNumber].Cells[3].Value = false;
+                    dataGridView1.Rows[rowNumber].Cells[4].Value = "";
                 }
             }
             button1.Enabled = true;
@@ -63,19 +69,33 @@ namespace robo_parser
             if (csvfiles.Count > 0)
                 foreach (string csv in csvfiles)
                 {
+                    bool expl = false;
+                    bool nocombi = true;
                     fname = Path.GetFileName(csv);
-                    listid = listBox1.FindString(fname);
-                    listBox1.Items[listid] = fname + "   - working...";
+                    //listid = listBox1.FindString(fname);
+                    // datagrid
+                    foreach (DataGridViewRow rrow in dataGridView1.Rows)
+                    {
+                        if (rrow.Cells[1].Value.ToString().Equals(fname))
+                        {
+                            listid = rrow.Index;
+                            break;
+                        }
+                    }
+                    dataGridView1.Rows[listid].Cells[4].Value = "working...";
+
+                    //listBox1.Items[listid] = fname + "   - working...";
                     try
                     {
                         await Task.Run(() =>
                         {
-                            csvtext = File.ReadAllLines(csv);
+                            csvtext = System.IO.File.ReadAllLines(csv);
                         });
                     }
                     catch
                     {
-                        listBox1.Items[listid] = fname + "   - read file error.";
+                        dataGridView1.Rows[listid].Cells[4].Value = "read file error.";
+                        //listBox1.Items[listid] = fname + "   - read file error.";
                     }
                     if (csvtext.Length > 0)
                     {
@@ -118,6 +138,27 @@ namespace robo_parser
                         //LINQ
                         //var query = from row tmprow in rows where tmprow.rod == 7 select tmprow; 
                         //double max =rows.Max(a => a.maxstress);
+
+                        //chek combi
+                        if (dataGridView1.Rows[listid].Cells[2].Value.ToString().Contains('-'))
+                        {
+                            try
+                            {
+                                string[] strrange = dataGridView1.Rows[listid].Cells[2].Value.ToString().Split('-');
+                                int.TryParse(strrange[0].ToString(), out int cmbmin);
+                                int.TryParse(strrange[1].ToString(), out int cmbmax);
+                                nocombi = false;
+                            }
+                            catch { }
+                        }
+                        else
+                        {
+                            nocombi = true;
+                        }
+                        
+                        //chek explosion
+                        expl = (bool)dataGridView1.Rows[listid].Cells[3].Value;
+
                         int ccrod = rows[0].rod;
                         double maxvalue = rows[0].maxstress;
                         int maxind = 0;
@@ -143,12 +184,13 @@ namespace robo_parser
                         }
                         maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString() + ";" + rows[maxind].data);
                         //save results
-                        listBox1.Items[listid] = fname + "   - save.";
+                        dataGridView1.Rows[listid].Cells[4].Value = "save.";
+                        //listBox1.Items[listid] = fname + "   - save.";
                         try
                         {
                             await Task.Run(() =>
                             {
-                                File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
+                                System.IO.File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
                             });
                             //excel save
                             /*
@@ -182,7 +224,8 @@ namespace robo_parser
                         }
                         catch
                         {
-                            listBox1.Items[listid] = fname + "   - save result file error.";
+                            dataGridView1.Rows[listid].Cells[4].Value = "save result file error.";
+                            //listBox1.Items[listid] = fname + "   - save result file error.";
                         }
                     }
                 }
@@ -191,12 +234,13 @@ namespace robo_parser
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            button1.Enabled = false;
+            
             LoadFileList();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            button1.Enabled = false;
             CSVParse();
         }
         

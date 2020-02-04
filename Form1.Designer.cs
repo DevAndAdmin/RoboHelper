@@ -32,6 +32,13 @@
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.calc = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.File = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.combi = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Взрыв = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -45,7 +52,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(348, 15);
+            this.button1.Location = new System.Drawing.Point(649, 18);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 2;
@@ -65,16 +72,72 @@
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(15, 44);
+            this.listBox1.Location = new System.Drawing.Point(12, 393);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(408, 342);
+            this.listBox1.Size = new System.Drawing.Size(172, 134);
             this.listBox1.TabIndex = 4;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.calc,
+            this.File,
+            this.combi,
+            this.Взрыв,
+            this.Status});
+            this.dataGridView1.Location = new System.Drawing.Point(12, 44);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.Size = new System.Drawing.Size(712, 343);
+            this.dataGridView1.TabIndex = 5;
+            // 
+            // calc
+            // 
+            this.calc.FalseValue = "false";
+            this.calc.HeaderText = "В расчет";
+            this.calc.Name = "calc";
+            this.calc.TrueValue = "true";
+            this.calc.Width = 80;
+            // 
+            // File
+            // 
+            this.File.HeaderText = "Файл модели";
+            this.File.Name = "File";
+            this.File.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.File.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.File.Width = 250;
+            // 
+            // combi
+            // 
+            this.combi.HeaderText = "Комбинации";
+            this.combi.Name = "combi";
+            this.combi.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.combi.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Взрыв
+            // 
+            this.Взрыв.FalseValue = "false";
+            this.Взрыв.HeaderText = "Взрывные";
+            this.Взрыв.Name = "Взрыв";
+            this.Взрыв.TrueValue = "true";
+            this.Взрыв.Width = 80;
+            // 
+            // Status
+            // 
+            this.Status.HeaderText = "Статус";
+            this.Status.Name = "Status";
+            this.Status.Width = 150;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(433, 397);
+            this.ClientSize = new System.Drawing.Size(731, 536);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
@@ -82,6 +145,7 @@
             this.Name = "Form1";
             this.Text = "RoboHelper";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -92,6 +156,12 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn calc;
+        private System.Windows.Forms.DataGridViewTextBoxColumn File;
+        private System.Windows.Forms.DataGridViewTextBoxColumn combi;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Взрыв;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Status;
     }
 }
 
