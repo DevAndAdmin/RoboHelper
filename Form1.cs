@@ -71,6 +71,8 @@ namespace robo_parser
                 {
                     bool expl = false;
                     bool nocombi = true;
+                    int cmbmin = 0;
+                    int cmbmax = 0;
                     fname = Path.GetFileName(csv);
                     //listid = listBox1.FindString(fname);
                     // datagrid
@@ -145,8 +147,8 @@ namespace robo_parser
                             try
                             {
                                 string[] strrange = dataGridView1.Rows[listid].Cells[2].Value.ToString().Split('-');
-                                int.TryParse(strrange[0].ToString(), out int cmbmin);
-                                int.TryParse(strrange[1].ToString(), out int cmbmax);
+                                int.TryParse(strrange[0].ToString(), out cmbmin);
+                                int.TryParse(strrange[1].ToString(), out cmbmax);
                                 nocombi = false;
                             }
                             catch { }
@@ -159,6 +161,7 @@ namespace robo_parser
                         //chek explosion
                         expl = (bool)dataGridView1.Rows[listid].Cells[3].Value;
 
+                        bool noresult = true;
                         int ccrod = rows[0].rod;
                         double maxvalue = rows[0].maxstress;
                         int maxind = 0;
@@ -167,65 +170,96 @@ namespace robo_parser
                         {
                             if (rows[i] != null)
                             {
-                                if (ccrod != rows[i].rod)
+                                if (nocombi == true )
                                 {
-                                    maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString() + ";" + rows[maxind].data);
-                                    ccrod = rows[i].rod;
-                                    maxvalue = rows[i].maxstress;
-                                    maxind = i;
+                                    if (ccrod != rows[i].rod)
+                                    {
+                                        maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString() + ";" + rows[maxind].data);
+                                        ccrod = rows[i].rod;
+                                        maxvalue = rows[i].maxstress;
+                                        maxind = i;
+                                    }
+                                    if (maxvalue < rows[i].maxstress)
+                                    {
+                                        maxvalue = rows[i].maxstress;
+                                        maxind = i;
+                                    }
                                 }
-                                if (maxvalue < rows[i].maxstress)
+                                else
                                 {
-                                    maxvalue = rows[i].maxstress;
-                                    maxind = i;
+                                    if (rows[i].comb >= cmbmin & rows[i].comb <= cmbmax)
+                                    {
+                                        noresult = false;
+                                        if (ccrod != rows[i].rod)
+                                        {
+                                            maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString() + ";" + rows[maxind].data);
+                                            ccrod = rows[i].rod;
+                                            maxvalue = rows[i].maxstress;
+                                            maxind = i;
+                                        }
+                                        if (maxvalue < rows[i].maxstress)
+                                        {
+                                            maxvalue = rows[i].maxstress;
+                                            maxind = i;
+                                        }
+                                    }
                                 }
 
                             }
                         }
-                        maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString() + ";" + rows[maxind].data);
+                        if(nocombi == true | noresult == false)
+                            maxlist.Add(rows[maxind].rod.ToString() + ";" + rows[maxind].comb.ToString() + ";" + rows[maxind].minstress.ToString() + ";" + rows[maxind].maxstress.ToString() + ";" + rows[maxind].data);
+
                         //save results
-                        dataGridView1.Rows[listid].Cells[4].Value = "save.";
-                        //listBox1.Items[listid] = fname + "   - save.";
-                        try
+                        if (maxlist.Count > 0)
                         {
-                            await Task.Run(() =>
+                            dataGridView1.Rows[listid].Cells[4].Value = "save.";
+                            //listBox1.Items[listid] = fname + "   - save.";
+                            try
                             {
-                                System.IO.File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
-                            });
-                            //excel save
-                            /*
-                             // Загрузить Excel, затем создать новую пустую рабочую книгу
-            Excel.Application excelApp = new Excel.Application();
-            
-            // Сделать приложение Excel видимым
-            excelApp.Visible = true;
-            excelApp.Workbooks.Add();
-            Excel._Worksheet workSheet = excelApp.ActiveSheet;
-            // Установить заголовки столбцов в ячейках
-            workSheet.Cells[1, "A"] = "NameCompany";
-            workSheet.Cells[1, "B"] = "Site";
-            workSheet.Cells[1, "C"] = "Cost";
-            int row = 1;
-            foreach (Price c in vPices)
-            {
-                row++;
-                workSheet.Cells[row, "A"] = c.Name;
-                workSheet.Cells[row, "B"] = c.Site;
-                workSheet.Cells[row, "C"] = c.Cost;
-            }
-               // Сохранить файл, выйти из Excel
- 
-                // убрать предупреждения!!! нужно для перезаписи
-                excelApp.DisplayAlerts = false;
-                workSheet.SaveAs(string.Format(@"{0}\Price.xlsx", Environment.CurrentDirectory));
-               
-                excelApp.Quit();
-                             */
+                                await Task.Run(() =>
+                                {
+                                    System.IO.File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
+                                });
+                                //excel save
+                                /*
+                                 // Загрузить Excel, затем создать новую пустую рабочую книгу
+                Excel.Application excelApp = new Excel.Application();
+
+                // Сделать приложение Excel видимым
+                excelApp.Visible = true;
+                excelApp.Workbooks.Add();
+                Excel._Worksheet workSheet = excelApp.ActiveSheet;
+                // Установить заголовки столбцов в ячейках
+                workSheet.Cells[1, "A"] = "NameCompany";
+                workSheet.Cells[1, "B"] = "Site";
+                workSheet.Cells[1, "C"] = "Cost";
+                int row = 1;
+                foreach (Price c in vPices)
+                {
+                    row++;
+                    workSheet.Cells[row, "A"] = c.Name;
+                    workSheet.Cells[row, "B"] = c.Site;
+                    workSheet.Cells[row, "C"] = c.Cost;
+                }
+                   // Сохранить файл, выйти из Excel
+
+                    // убрать предупреждения!!! нужно для перезаписи
+                    excelApp.DisplayAlerts = false;
+                    workSheet.SaveAs(string.Format(@"{0}\Price.xlsx", Environment.CurrentDirectory));
+
+                    excelApp.Quit();
+                                 */
+                            }
+                            catch
+                            {
+                                dataGridView1.Rows[listid].Cells[4].Value = "save result file error.";
+                                //listBox1.Items[listid] = fname + "   - save result file error.";
+                            }
                         }
-                        catch
+                        else
                         {
-                            dataGridView1.Rows[listid].Cells[4].Value = "save result file error.";
-                            //listBox1.Items[listid] = fname + "   - save result file error.";
+                            dataGridView1.Rows[listid].Cells[4].Value = "No result.";
                         }
                     }
                 }
