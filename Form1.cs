@@ -219,7 +219,7 @@ namespace robo_parser
                             {
                                 await Task.Run(() =>
                                 {
-                                    System.IO.File.WriteAllLines(Path.GetFileName(csv) + "_result.txt", maxlist);
+                                    System.IO.File.WriteAllLines(Path.GetFileName(csv) + "_result.csv", maxlist);
                                 });
                                 //excel save
                                 /*
